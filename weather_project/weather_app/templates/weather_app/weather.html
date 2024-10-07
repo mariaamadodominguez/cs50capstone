@@ -1,0 +1,62 @@
+{% extends "weather_app/layout.html" %}
+{% load static %}
+
+{% block body %}
+<h2 id="page-title">{{ title }}</h2>    
+
+{% if error %}
+    <div id = 'error-msg' class = 'alert alert-warning'>{{ error }}</div>
+{% endif %}
+
+{% if page_name == 'current'%}
+<div class ="p-1 my-1 bg-white text-dark">
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            {{ form.as_p }}
+        </div class="form-group">
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">Get Weather</button>
+        </div>                           
+    </form>
+</div>    
+{% endif %}
+
+{% if avg_temp %}
+    <p>Average Temperature: {{ avg_temp }}°C</p>
+{% endif %}
+
+{% if weather_data %}
+<div id="current-view" class ="p-1 my-1 bg-white text-dark border border-secondary">  
+    <h3 class="day">Current weather<img src = "https://openweathermap.org/img/wn/{{weather_data.icon}}.png">    </h3>  
+    <h5>Sunrise {{ weather_data.sunrise|date:"H:i" }} - Sunset {{ weather_data.sunset|time:"H:i"  }} {{ weather_data.timezone}} </h5>  
+    <div style="display:none;"><span id="city-lat">{{ lat }}</span><span id="city-lon">{{ lon }}</span></div>                
+    <ul>
+        <li style='text-transform:capitalize;'>{{ weather_data.description }}</li> 
+        <li>{{ weather_data.temperature }}°C (Feels like: {{weather_data.feels_like }})</li>
+        <li>Humidity: {{weather_data.humidity}}</li>
+        <li>Wind: {{weather_data.wind}}</li>
+        <li>Pressure: {{weather_data.pressure}}</li>    
+    </ul>     
+    {% if page_name == 'cityweather'%}
+    <div class="form-group">
+        {% csrf_token %}
+        <button type="submit" id='forecast-btn' class="btn btn-primary">5 Day Weather Forecast</button>
+        <button type="submit" id='airpollution-btn' class="btn btn-secondary">Air Pollution</button>
+    </div> 
+    {% endif %}    
+</div>        
+{% endif %}
+
+<div id="airpollution-view" class="p-1 bg-white text-dark border border-secondary" style="display:none;"></div>
+
+<div id="forecast-view" class="p-1 bg-white text-dark border border-secondary" style="display:none;">
+</div>
+
+{% if weather_data  %}
+{% block script %}
+    <script src="{% static 'weather_app/forecast.js' %}"></script>
+    <script src="{% static 'weather_app/air_pollution.js' %}"></script>
+{% endblock %}
+{% endif %}
+{% endblock %}

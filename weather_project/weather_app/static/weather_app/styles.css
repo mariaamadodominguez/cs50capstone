@@ -1,0 +1,30 @@
+.button {
+    border: none;
+    color: #007bff;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: contents;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+  }
+  .day {
+    border-bottom: 1px solid #ddd;			
+    margin-bottom: 10px;
+    overflow: auto;
+    background-color: #0099ff;
+    display: block;
+  }
+
+  .period {
+    overflow: auto;
+    background-color:greenyellow;        
+	  text-transform: capitalize;    
+  }
+
+  .caption {
+    overflow: auto;
+    background-color:silver;        
+	  text-transform: capitalize;   
+  }
