@@ -4,6 +4,10 @@
 {% block body %}
 <h2 id="page-title">{{ title }}</h2>    
 
+{% if error %}
+    <div id = 'error-msg' class = 'alert alert-warning'>{{ error }}</div>
+{% endif %}
+
 <div id = 'error-msg' class = 'alert alert-warning' style="display:none;";></div>
 <div class ="p-1 my-1 bg-white text-dark">
 <form method="post">

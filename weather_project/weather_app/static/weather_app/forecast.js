@@ -64,6 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log(error);                  
             }); 
         }
+
 });
 
 function add_day_forecast(day_forecast){
@@ -101,3 +102,5 @@ function UnixTimeStampToDateTime( unixTimeStamp )
     //dateTime = dateTime.AddSeconds( unixTimeStamp ).ToLocalTime();
     return dateTime;
 }
+
+

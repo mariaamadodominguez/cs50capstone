@@ -14,6 +14,7 @@ urlpatterns = [
     path("airpollution", views.air_pollution_view, name='air_pollution_view'),
     path("airpollution_forecast", views.air_pollution_forecast_view, name='air_pollution_forecast_view'),    
     path("monthlyweather", views.monthly_weather_view, name="monthly_weather_view"),
+    path("weatherhistory", views.weatherhistory_view, name="weatherhistory_view"),
     path("login", views.login_view, name="login"),
     path("logout", views.logout_view, name="logout"),
     path("register", views.register, name="register")

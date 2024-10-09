@@ -4,6 +4,7 @@
 {% block body %}
 <h2 id="page-title">{{ title }}</h2>    
 
+<div id = 'error-msg' class = 'alert alert-warning' style="display:none;"></div>
 {% if error %}
     <div id = 'error-msg' class = 'alert alert-warning'>{{ error }}</div>
 {% endif %}
@@ -30,7 +31,7 @@
 <div id="current-view" class ="p-1 my-1 bg-white text-dark border border-secondary">  
     <h3 class="day">Current weather<img src = "https://openweathermap.org/img/wn/{{weather_data.icon}}.png">    </h3>  
     <h5>Sunrise {{ weather_data.sunrise|date:"H:i" }} - Sunset {{ weather_data.sunset|time:"H:i"  }} {{ weather_data.timezone}} </h5>  
-    <div style="display:none;"><span id="city-lat">{{ lat }}</span><span id="city-lon">{{ lon }}</span></div>                
+    <div style="display:block;"><span id="city-lat">{{ lat }}</span><span id="city-lon">{{ lon }}</span></div>                
     <ul>
         <li style='text-transform:capitalize;'>{{ weather_data.description }}</li> 
         <li>{{ weather_data.temperature }}°C (Feels like: {{weather_data.feels_like }})</li>
@@ -43,6 +44,7 @@
         {% csrf_token %}
         <button type="submit" id='forecast-btn' class="btn btn-primary">5 Day Weather Forecast</button>
         <button type="submit" id='airpollution-btn' class="btn btn-secondary">Air Pollution</button>
+        <button type="submit" id='monthly-weather-btn' class="btn btn-info">Weather History</button>
     </div> 
     {% endif %}    
 </div>        
@@ -50,13 +52,22 @@
 
 <div id="airpollution-view" class="p-1 bg-white text-dark border border-secondary" style="display:none;"></div>
 
-<div id="forecast-view" class="p-1 bg-white text-dark border border-secondary" style="display:none;">
+<div id="forecast-view" class="p-1 bg-white text-dark border border-secondary" style="display:none;"></div>
+
+<div id="monthly-weather-view" class="p-1 bg-white text-dark border border-secondary" style="display:none;">
+{% if graph %}
+    <div id="current-view" class ="p-1 my-1 bg-white text-dark border border-secondary">  
+        {{graph|safe}}
+    </div>        
+{% endif %}
 </div>
+
 
 {% if weather_data  %}
 {% block script %}
     <script src="{% static 'weather_app/forecast.js' %}"></script>
     <script src="{% static 'weather_app/air_pollution.js' %}"></script>
+    <script src="{% static 'weather_app/weather_history.js' %}"></script>
 {% endblock %}
 {% endif %}
 {% endblock %}

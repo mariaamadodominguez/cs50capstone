@@ -11,7 +11,8 @@ class GeoCityForm(forms.Form):
 
 class MonthlyNormalsForm(forms.Form):
     queryCities = City.objects.all()
-    city = forms.ModelChoiceField(widget=forms.Select(attrs={'class': 'form-control'}), queryset=queryCities, required=False, label=False)
+    #city = forms.ModelChoiceField(widget=forms.Select(attrs={'class': 'form-control'}), queryset=queryCities, required=False, label=False)
+    city = forms.CharField(widget=forms.TextInput(attrs={'id':'city', 'max_length':'100', 'class':'form-control','placeholder': 'City'}), label=False)       
     #lat = forms.ModelChoiceField(widget=forms.Select(attrs={'class': 'form-control'}), queryset=queryCities, required=False, label=False)
     #lon = forms.ModelChoiceField(widget=forms.Select(attrs={'class': 'form-control'}), queryset=queryCities, required=False, label=False)
     dtStart = forms.DateField(initial=datetime.datetime.today)

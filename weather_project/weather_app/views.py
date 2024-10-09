@@ -171,8 +171,13 @@ def geo_view(request):
         if form.is_valid():
             city = form.cleaned_data['city']
             limit = int(form.cleaned_data['limit'])
-            geo_data = fetch_geo_data(city, limit)            
-            return render(request, 'weather_app/geoloc.html', {'geo_data': geo_data, 'form': form})
+            geo_data = fetch_geo_data(city, limit)   
+            if len(geo_data['data']) > 0 :
+                return render(request, 'weather_app/geoloc.html', {'geo_data': geo_data, 'form': form})
+            else:
+                return render(request, 'weather_app/geoloc.html', {
+                                "error": f'Geodata for {city} not found!',
+                                'form': form })
     else:
         form = GeoCityForm(initial={"limit":1})        
     return render(request, 'weather_app/geoloc.html', {'form': form})
@@ -186,8 +191,10 @@ def currentweather(request, id):
         weather_data['timezone'] = weather_data['timezone']/3600
         return render(request, 'weather_app/weather.html', {
             "title": city.city+'-'+city.state,
-            "lat":str(round(city.lat,2)),
-            "lon":str(round(city.lon,2)),
+            #"lat":str(round(city.lat,2)),
+            #"lon":str(round(city.lon,2)),
+            "lat":city.lat,
+            "lon":city.lon,
             "page_name": 'cityweather',                
             'weather_data': weather_data})
     
@@ -230,50 +237,109 @@ def cityweather(request):
     #weather_data = fetch_weather_data(cityname) 
     weather_data = fetch_weather_data(lat,lon, '') 
     return JsonResponse( {'weather_data': weather_data,})            
-    
+
+def weatherhistory_view(request):
+    data = json.loads(request.body)    
+    lat = float(data.get('lat',''))
+    lon = float(data.get('lon',''))
+    #lat = -33.4377756 
+    #lon = -70.6504502
+
+    start = pd.Timestamp(data.get('dtStart',''))
+    end = pd.Timestamp(data.get('dtEnd',''))
+
+    # Fetch weather data from API (pseudo-code)      
+    try:                                
+        stations = Stations()
+        stations = stations.nearby(lat, lon)
+        station = stations.fetch(1)
+        
+        Monthly_data = Monthly(station, start, end)
+        Monthly_data = Monthly_data.normalize()
+        Monthly_data = Monthly_data.fetch()
+        if (Monthly_data.empty):                   
+            return JsonResponse( {'cod': 400, "message": 'empty'})            
+        else:            
+            #-- Plot line chart including average, minimum and maximum temperature
+            Monthly_data.plot(y=['tmin', 'tmax','tavg'])
+            label = str(list(station.name)[0])+"-"+str(list(station.region)[0])+"/"+str(list(station.country)[0])
+            plt.title(label)
+            plt.xlabel('MeteoStat Monthly Data')
+            plt.ylabel('Temp [min/max/avg]')
+                                    
+            imgdata = StringIO()
+            plt.savefig(imgdata, format='svg')
+                    
+            imgdata.seek(0)     
+            data = imgdata.getvalue()
+            return JsonResponse( {'cod': 200, 'graph': data,})            
+        
+        
+    except IntegrityError:
+        return JsonResponse({
+            "error": IntegrityError.e.__cause__,
+            "cod": '404', 'lat':lat, 'lon':lon,'start':start,'end':end,                
+            }, status=404)
+
 
 def monthly_weather_view(request):
     if request.method == 'POST':
         form = MonthlyNormalsForm(request.POST)
         if form.is_valid():
-            current_city = City.objects.get(city=form.cleaned_data['city'])   
-            current_city.lon= -42.5325303 
-            current_city.lat=  -22.2800004
+            current_city = form.cleaned_data['city']            
+            try:            
+                geo_data = fetch_geo_data(current_city, 1)
+                
+                if len(geo_data['data']) > 0 : 
+                    gdcity = geo_data['data'][0] 
+                    current_city_lon= gdcity['lon'] 
+                    current_city_lat=  gdcity['lat'] 
             
+                    # Fetch weather data from API (pseudo-code)            
+                    stations = Stations()
+                    stations = stations.nearby(current_city_lat, current_city_lon)
+                    station = stations.fetch(1)
 
-            # Fetch weather data from API (pseudo-code)            
-            stations = Stations()
-            stations = stations.nearby(current_city.lat, current_city.lon)
-            station = stations.fetch(1)
-
-            start = pd.Timestamp(form.cleaned_data['dtStart'])
-            end = pd.Timestamp(form.cleaned_data['dtEnd'])
-            Monthly_data = Monthly(station, start, end)
-            Monthly_data = Monthly_data.normalize()
-            Monthly_data = Monthly_data.fetch()
-
-            #print(data)
-            # Process data with Pandas
-            #df = pd.DataFrame([Monthly_data])
-            
-            #-- Plot line chart including average, minimum and maximum temperature
-            Monthly_data.plot(y=['tmin', 'tmax','tavg', 'prcp'])
-            label = str(list(station.name)[0])+"-"+str(list(station.region)[0])+"/"+str(list(station.country)[0])
-            plt.title(label)
-            plt.xlabel('MeteoStat Monthly Data')
-            plt.ylabel('Temp [min/max/avg]')
-            #plt.show()
-            imgdata = StringIO()
-            plt.savefig(imgdata, format='svg')
-            imgdata.seek(0)     
-            data = imgdata.getvalue()
-            context = {
-                "title": 'MeteoStat Monthly Weather',
-                "page_name": "current",
-                'form': form, 
-                'graph':data
-                }
-            return render(request, 'weather_app/monthlyweather.html', context)
+                    start = pd.Timestamp(form.cleaned_data['dtStart'])
+                    end = pd.Timestamp(form.cleaned_data['dtEnd'])
+                    Monthly_data = Monthly(station, start, end)
+                    Monthly_data = Monthly_data.normalize()
+                    Monthly_data = Monthly_data.fetch()
+                   
+                    #-- Plot line chart including average, minimum and maximum temperature
+                    Monthly_data.plot(y=['tmin', 'tmax','tavg'])
+                    label = str(list(station.name)[0])+"-"+str(list(station.region)[0])+"/"+str(list(station.country)[0])
+                    
+                    plt.title(f'{label} - {gdcity['lat']}{gdcity['lon']} {form.cleaned_data['dtStart']} - {form.cleaned_data['dtEnd']}',)
+                    plt.xlabel('MeteoStat Monthly Data')
+                    plt.ylabel('Temp [min/max/avg]')
+                                    
+                    imgdata = StringIO()
+                    plt.savefig(imgdata, format='svg')
+                    
+                    imgdata.seek(0)     
+                    data = imgdata.getvalue()
+                    context = {
+                        "title": 'MeteoStat Monthly Weather',
+                        "page_name": "current",
+                        'form': form, 
+                        'graph': data
+                        }
+                    return render(request, 'weather_app/monthlyweather.html', context)
+                else:
+                    return render(request, 'weather_app/monthlyweather.html', {
+                        "title": 'MeteoStat Monthly Weather',
+                        "page_name": "current",
+                        "error": f'Geodata for {current_city} not found!',
+                        'form': form
+                    })    
+            except:
+                return render(request, 'weather_app/monthlyweather.html', {
+                    "title": 'MeteoStat Monthly Weather',
+                    "page_name": "current",
+                    "error": f'No data for {current_city}!',
+                    'form': form
+                })
     else:
         form = MonthlyNormalsForm()
     return render(request, 'weather_app/monthlyweather.html',{ 
