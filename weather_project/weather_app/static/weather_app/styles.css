@@ -13,18 +13,26 @@
     border-bottom: 1px solid #ddd;			
     margin-bottom: 10px;
     overflow: auto;
-    background-color: #0099ff;
-    display: block;
+    color: #fff;
+    background-color: #007bff;
+    display: block; 
   }
 
   .period {
     overflow: auto;
-    background-color:greenyellow;        
-	  text-transform: capitalize;    
+    background-color:lightgray;        
+	  text-transform: capitalize;  
+    color: #000;  
+    padding: 0px 10px;
   }
 
   .caption {
     overflow: auto;
-    background-color:silver;        
+    background-color:#6c757d;        
 	  text-transform: capitalize;   
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+    color: #fff;
+    text-align: left;
+    caption-side: bottom;
   }

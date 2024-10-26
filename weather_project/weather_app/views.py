@@ -60,12 +60,20 @@ def fetch_weather_data(lat, lon, city):
         'icon':data['weather'][0]['icon'],
         'temperature': round(data['main']['temp']),
         'feels_like': round(data['main']['feels_like']),
+        'temp_min': round(data['main']['temp_min']),
+        'temp_max': round(data['main']['temp_max']),
+        'sea_level': data['main']['sea_level'],
+        'grnd_level': data['main']['grnd_level'],
         'humidity': data['main']['humidity'],
         'pressure': data['main']['pressure'],
+        'visibility':data['visibility']/1000,
         'wind': round(data['wind']['speed']),
+        'wind_deg':round(data['wind']['deg']),
+        'clouds':round(data['clouds']['all']),
         'sunrise': datetime.fromtimestamp(data['sys']['sunrise'], tz=timezone.utc), #Sunrise time, unix, UTC
         'sunset': datetime.fromtimestamp(data['sys']['sunset'], tz=timezone.utc), #Sunset time, unix, UTC,
         'timezone':data['timezone'], #Shift in seconds from UTC
+        'name': data['name']
     }
 
 def fetch_geo_data(city, limit):
@@ -84,9 +92,8 @@ def fetch_geo_data(city, limit):
 
 def index(request):    
     
- # Authenticated users view their inbox
-    if request.user.is_authenticated:        
-        # Return favorite cities in reverse chronologial order
+    # Authenticated users view all cities registered
+    if request.user.is_authenticated:                
         allcities = City.objects.all()
         allcities = allcities.order_by("-pk").all()   
         p = Paginator(allcities, 10)
@@ -94,18 +101,35 @@ def index(request):
         page_obj = p.get_page(page_number)
     
         return render(request, "weather_app/index.html", {
-        'title':"All cities",
-        "page_name": 'index',        
+        'title':"Current Weather",
+        "page_name": 'All Cities',        
         'page_obj':page_obj,
         })
     # Everyone else 
     else:
-        form = CityForm()
-        return render(request, 'weather_app/weather.html', {
+        return render(request, 'weather_app/index.html', {
         'title':"Current Weather",
-        "page_name": 'current',        
-        'form':form,
+        "page_name": 'current'
         })        
+
+def favourites(request):    
+    
+    # Filter post returned based on following":
+    user = WUser.objects.filter(id = request.user.id)    
+    fav_cities = City.objects.filter(id__in=user.values_list("favouritesList", flat=True))                    
+    
+    # Return post in reverse chronologial order
+    fav_cities = fav_cities.order_by("-pk").all()
+
+    p = Paginator(fav_cities, 10)
+    page_number = request.GET.get('page')
+    page_obj = p.get_page(page_number)
+
+    return render(request, "weather_app/index.html", {
+        'title':"Current Weather",
+        "page_name": 'Favourite Cities',        
+        'page_obj':page_obj,
+        })    
 
 def addNewCity(request):
     if request.method == 'POST':
@@ -123,7 +147,11 @@ def addNewCity(request):
                 state = data.get("state")            
                 )
                 city.save()    
-                message = 'City added.'
+                message = 'City added.'                
+                # add to favouriteslist
+                currentUser = request.user
+                currentUser.favouritesList.add(city)                
+                currentUser.save()
                         
         except IntegrityError:
             return JsonResponse({"error": IntegrityError.e.__cause__}, status=404)
@@ -173,14 +201,15 @@ def geo_view(request):
             limit = int(form.cleaned_data['limit'])
             geo_data = fetch_geo_data(city, limit)   
             if len(geo_data['data']) > 0 :
-                return render(request, 'weather_app/geoloc.html', {'geo_data': geo_data, 'form': form})
+                return render(request, 'weather_app/geoloc.html', {'title':'Geodata', 'geo_data': geo_data, 'form': form})
             else:
                 return render(request, 'weather_app/geoloc.html', {
-                                "error": f'Geodata for {city} not found!',
+                                'title':'Geodata',
+                                'error': f'Geodata for {city} not found!',
                                 'form': form })
     else:
-        form = GeoCityForm(initial={"limit":1})        
-    return render(request, 'weather_app/geoloc.html', {'form': form})
+        form = GeoCityForm(initial={"limit":5})        
+    return render(request, 'weather_app/geoloc.html', {'title':'Geodata', 'form': form})
 
 def currentweather(request, id):
     if request.method == "GET":     
@@ -188,11 +217,9 @@ def currentweather(request, id):
         weather_data = fetch_weather_data(city.lat, city.lon, '')
         weather_data['sunrise'] = weather_data['sunrise']+ timedelta(0,weather_data['timezone']) 
         weather_data['sunset'] = weather_data['sunset']+ timedelta(0,weather_data['timezone'])         
-        weather_data['timezone'] = weather_data['timezone']/3600
+        weather_data['timezone'] = round(weather_data['timezone']/3600,0)
         return render(request, 'weather_app/weather.html', {
-            "title": city.city+'-'+city.state,
-            #"lat":str(round(city.lat,2)),
-            #"lon":str(round(city.lon,2)),
+            "title": city.city+'-'+city.state,            
             "lat":city.lat,
             "lon":city.lon,
             "page_name": 'cityweather',                
@@ -207,16 +234,16 @@ def weather(request):
                 weather_data = fetch_weather_data(0,0,city)
                 weather_data['sunrise'] = weather_data['sunrise']+ timedelta(0,weather_data['timezone']) 
                 weather_data['sunset'] = weather_data['sunset']+ timedelta(0,weather_data['timezone'])         
-                weather_data['timezone'] = weather_data['timezone']/3600
+                weather_data['timezone'] = round(weather_data['timezone']/3600,0)
                 return render(request, 'weather_app/weather.html', {
-                    "title": 'Current Weather',
+                    "title": 'City Weather',
                     "page_name": "current",
                     'weather_data': weather_data, 
                     'form': form
                     })
             except:
                 return render(request, 'weather_app/weather.html', {
-                    "title": 'Current Weather',
+                    "title": 'City Weather',
                     "page_name": "current",
                     "error": "City not found!",
                     'form': form
@@ -224,17 +251,15 @@ def weather(request):
     else:
         form = CityForm()
     return render(request, 'weather_app/weather.html', {
-        "title": 'Current Weather',
+        "title": 'City Weather',
         "page_name": "current",                
         'form': form
         })
 
 def cityweather(request):    
     data = json.loads(request.body)    
-    #cityname = data.get('city_name','')
     lat = data.get('lat','')
-    lon = data.get('lon','')
-    #weather_data = fetch_weather_data(cityname) 
+    lon = data.get('lon','')    
     weather_data = fetch_weather_data(lat,lon, '') 
     return JsonResponse( {'weather_data': weather_data,})            
 
@@ -394,4 +419,25 @@ def register(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "weather_app/register.html")
-#OPEN_WEATHER_KEY = 'a04aaf2aec23e50b409641a9bfc3def9'
+
+def addFavourite(request):
+    
+    data = json.loads(request.body)    
+    city_id = data.get('city_id','')
+
+    try:
+        city = City.objects.get(pk=city_id)
+    except User.DoesNotExist:
+        raise Http404("City not found.")
+
+    currentUser = WUser.objects.get(pk=request.user.id)
+    if city in currentUser.favouritesList.all():    
+        fav = False
+        currentUser.favouritesList.remove(city) 
+    else:
+        fav = True
+        currentUser.favouritesList.add(city)                
+    currentUser.save()
+
+    return JsonResponse({"userFav": fav})        
+          

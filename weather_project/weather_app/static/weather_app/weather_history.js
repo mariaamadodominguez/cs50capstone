@@ -1,9 +1,15 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    document.querySelector('#monthly-weather-btn').addEventListener('click', () =>                  
-        weather_history());   
-
-});
+    document.querySelector('#monthly-weather-btn').addEventListener('click', () =>        
+          {
+            if (document.querySelector('#monthly-weather-view').style.display == 'block'){
+                document.querySelector('#monthly-weather-view').style.display = 'none';
+            } else {
+                weather_history();   
+            }        
+        }                      
+    );
+})    
 
 function weather_history() {
     url = '/weatherhistory';

@@ -1,8 +1,15 @@
 document.addEventListener('DOMContentLoaded', () => {
 
     document.querySelector('#airpollution-btn').addEventListener('click', () =>                  
-        airpollution());                      
-
+        {
+            if (document.querySelector('#airpollution-view').style.display == 'block'){
+                document.querySelector('#airpollution-view').style.display = 'none';
+            } else {
+                airpollution();                      
+            }        
+        }    
+        
+    )
     function airpollution() {
         url = '/airpollution';        
         city_lat = document.querySelector(`#city-lat`).innerHTML;

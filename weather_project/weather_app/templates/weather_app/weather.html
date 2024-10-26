@@ -2,12 +2,14 @@
 {% load static %}
 
 {% block body %}
-<h2 id="page-title">{{ title }}</h2>    
+<h2 id="page-title" >{{ title }}</h2>    
 
 <div id = 'error-msg' class = 'alert alert-warning' style="display:none;"></div>
 {% if error %}
     <div id = 'error-msg' class = 'alert alert-warning'>{{ error }}</div>
 {% endif %}
+
+<p id="current-geopos"></p>    
 
 {% if page_name == 'current'%}
 <div class ="p-1 my-1 bg-white text-dark">
@@ -17,7 +19,7 @@
             {{ form.as_p }}
         </div class="form-group">
         <div class="form-group">
-            <button type="submit" class="btn btn-primary">Get Weather</button>
+            <button type="submit" class="btn btn-primary">Current Weather</button>
         </div>                           
     </form>
 </div>    
@@ -29,16 +31,40 @@
 
 {% if weather_data %}
 <div id="current-view" class ="p-1 my-1 bg-white text-dark border border-secondary">  
-    <h3 class="day">Current weather<img src = "https://openweathermap.org/img/wn/{{weather_data.icon}}.png">    </h3>  
-    <h5>Sunrise {{ weather_data.sunrise|date:"H:i" }} - Sunset {{ weather_data.sunset|time:"H:i"  }} {{ weather_data.timezone}} </h5>  
-    <div style="display:block;"><span id="city-lat">{{ lat }}</span><span id="city-lon">{{ lon }}</span></div>                
-    <ul>
-        <li style='text-transform:capitalize;'>{{ weather_data.description }}</li> 
-        <li>{{ weather_data.temperature }}°C (Feels like: {{weather_data.feels_like }})</li>
-        <li>Humidity: {{weather_data.humidity}}</li>
-        <li>Wind: {{weather_data.wind}}</li>
-        <li>Pressure: {{weather_data.pressure}}</li>    
+
+    <h3 class="period" style="padding-left:10px">
+        {{weather_data.name}}
+        {{ weather_data.temperature }}°C 
+        <span style='text-transform:capitalize;'>{{ weather_data.description }}</span>
+        <img src = "https://openweathermap.org/img/wn/{{weather_data.icon}}.png">        
+
+    </h3>  
+     
+    <div style="display:none;"><span id="city-lat">{{ lat }}</span><span id="city-lon">{{ lon }}</span></div>                
+    
+    <div class='p-2'>
+        <span>Feels like: {{weather_data.feels_like }}°C </span>
+        <span>Min. {{ weather_data.temp_min}}°C </span>
+        <span>Max. {{ weather_data.temp_max}}°C</span>
+    </div>
+
+    <ul class="fa-ul">        
+        <li><i class="fa-li fa fa-tint " aria-hidden="true"></i> Humidity: {{weather_data.humidity}}%</li>
+        <li><i class="fa-li fa fa-location-arrow" aria-hidden="true"></i> 
+        {{weather_data.wind}} m/s - <span id="wind-deg">{{weather_data.wind_deg}}</span>º <span id="wind-dir"></span>  
+        </li>        
+
+        <li><i class="fa-li fa fa-cloud" aria-hidden="true"></i>{{weather_data.clouds}}%</li>
+        <li><i class="fa-li fa fa-eye" aria-hidden="true"></i>Visibility: {{weather_data.visibility}}Km</li>        
+        <li><i class="fa-li fa fa-check" aria-hidden="true"></i> Pressure: {{weather_data.pressure}} hPa 
+        (Sea Level: {{weather_data.sea_level}} -Grnd Level: {{weather_data.grnd_level}})
+        </li>
     </ul>     
+    <div class='p-2'>
+        <span>Sunrise {{ weather_data.sunrise|date:"H:i" }}</span> 
+        <span>Sunset {{ weather_data.sunset|time:"H:i"  }} GMT {{ weather_data.timezone}}</span>
+    </div>    
+
     {% if page_name == 'cityweather'%}
     <div class="form-group">
         {% csrf_token %}
@@ -63,7 +89,7 @@
 </div>
 
 
-{% if weather_data  %}
+{% if page_name == 'cityweather'  %}
 {% block script %}
     <script src="{% static 'weather_app/forecast.js' %}"></script>
     <script src="{% static 'weather_app/air_pollution.js' %}"></script>

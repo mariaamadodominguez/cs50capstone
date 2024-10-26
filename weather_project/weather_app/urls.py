@@ -4,7 +4,8 @@ from . import views
 #app_name = "weather_app"            
 urlpatterns = [
     path("", views.index, name="index"),
-    #path("current", views.currentweather, name="currentweather"),
+    path("favourites", views.favourites, name="favourites"),    
+    path("favouritecity", views.addFavourite, name="addFavourite"),
     path("weather", views.weather, name="weather"),
     path("currentweather/<int:id>", views.currentweather, name="currentweather"),    
     path("cityweather", views.cityweather, name="cityweather"),

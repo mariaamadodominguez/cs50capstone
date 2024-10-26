@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
             saveCity(_btn.id));            
         })      
 
+
     function saveCity(city_id) {
         url = '/addNewCity'     
         console.log(url, city_id); 
@@ -39,5 +40,5 @@ document.addEventListener('DOMContentLoaded', () => {
             document.querySelector('#error-msg').innerHTML= error;     
             console.log(error);                  
             }); 
-        }
+        }        
 });
