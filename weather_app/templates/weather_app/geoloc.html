@@ -1,0 +1,45 @@
+{% extends "weather_app/layout.html" %}
+{% load static %}
+
+{% block body %}
+<h2 id="page-title">{{ title }}</h2>    
+
+{% if error %}
+    <div id = 'error-msg' class = 'alert alert-warning'>{{ error }}</div>
+{% endif %}
+
+<div id = 'error-msg' class = 'alert alert-warning' style="display:none;";></div>
+<div class ="p-1 my-1 bg-white text-dark">
+
+<form method="post">
+    {% csrf_token %}
+    <div class="form-group">
+        {{ form.as_p }}
+    </div class="form-group">
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Get Geo</button>
+    </div>     
+    
+</form>
+{% if geo_data %}
+    {% for gdcity in geo_data.data %}
+<div class ="p-1 my-1 bg-white text-dark border border-secondary">  
+    <h3 id="name{{ forloop.counter0 }}">{{ gdcity.name }}</h3>    
+    {% if user.is_authenticated  %}
+        {% csrf_token %}
+        <button id="{{ forloop.counter0 }}" type="submit" class="save-button button">Save</button>
+    {% endif %}                                
+    <ul>
+    <li>Lat:<span id="lat{{ forloop.counter0 }}"> {{gdcity.lat}}</span></li>        
+    <li>Lon:<span id="lon{{ forloop.counter0 }}">{{gdcity.lon}}</span></li>
+    <li>Country:<span id="country{{ forloop.counter0 }}"> {{ gdcity.country }}</span></li>
+    <li>State:<span id="state{{ forloop.counter0 }}"> {{ gdcity.state }}</span></li>
+</div>    
+    {% endfor %}    
+{% endif %}
+{% if user.is_authenticated  %}
+{% block script %}
+    <script src="{% static 'weather_app/geoloc.js' %}"></script>
+{% endblock %}
+{% endif %}                                
+{% endblock %}
