@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         element = document.createElement('div');
                         element.className = 'day';
                         element.id = dt.getDay();
-                        txtDay = `<h3>${dt.toLocaleString('pt-BR', options)}<img src = "https://openweathermap.org/img/wn/${day.weather[0].icon}.png"></h3>`;
+                        txtDay = `<h3 style="padding-left:10px">${dt.toLocaleString('pt-BR', options)}<img src = "https://openweathermap.org/img/wn/${day.weather[0].icon}.png"></h3>`;
                         element.innerHTML = txtDay;
                         document.querySelector('#forecast-view').append(element);  
                     }

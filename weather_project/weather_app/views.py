@@ -55,6 +55,14 @@ def fetch_weather_data(lat, lon, city):
     
     response = requests.get(url)
     data = response.json()    
+    try:
+        visibility = data['visibility']/1000        
+    except Exception as e:
+        raise
+    else:
+        pass
+    finally:
+        pass
     return {
         'description': data['weather'][0]['description'],
         'icon':data['weather'][0]['icon'],
@@ -74,8 +82,12 @@ def fetch_weather_data(lat, lon, city):
         'sunset': datetime.fromtimestamp(data['sys']['sunset'], tz=timezone.utc), #Sunset time, unix, UTC,
         'timezone':data['timezone'], #Shift in seconds from UTC
         'name': data['name']
+<<<<<<< HEAD
+        }
+=======
     }
 
+>>>>>>> 1254c3183c42997190839d0d0b44aa8320ea6a39
 def fetch_geo_data(city, limit):
     api_key = settings.OPEN_WEATHER_KEY
     url = f'http://api.openweathermap.org/geo/1.0/direct?q=={city}&appid={api_key}&limit={limit}'
@@ -114,11 +126,19 @@ def index(request):
 
 def favourites(request):    
     
+<<<<<<< HEAD
+    # Filter cities returned based on favourites:
+    user = WUser.objects.filter(id = request.user.id)    
+    fav_cities = City.objects.filter(id__in=user.values_list("favouritesList", flat=True))                    
+    
+    # Return all user favourite cities
+=======
     # Filter post returned based on following":
     user = WUser.objects.filter(id = request.user.id)    
     fav_cities = City.objects.filter(id__in=user.values_list("favouritesList", flat=True))                    
     
     # Return post in reverse chronologial order
+>>>>>>> 1254c3183c42997190839d0d0b44aa8320ea6a39
     fav_cities = fav_cities.order_by("-pk").all()
 
     p = Paginator(fav_cities, 10)
@@ -413,7 +433,7 @@ def register(request):
             user = WUser.objects.create_user(username, email, password)
             user.save()
         except IntegrityError:
-             return JsonResponse({"error": "Post not found."}, status=404)
+             return JsonResponse({"error": "Error saving user!"}, status=404)
        
         login(request, user)
         return HttpResponseRedirect(reverse("index"))

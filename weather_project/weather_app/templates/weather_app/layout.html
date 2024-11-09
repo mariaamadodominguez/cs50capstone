@@ -18,8 +18,13 @@
                     <li class="nav-item"><a class="nav-link" href="{% url 'weather' %}">City Weather</a></li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'geo_view' %}">Geo location</a></li>
                     {% if user.is_authenticated %}
+<<<<<<< HEAD
+                    <li class="nav-item"><a class="nav-link" href="{% url 'monthly_weather_view' %}">MeteoStat Monthly Weather</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'favourites' %}">{{ user.username }}</a></li>
+=======
                     <li class="nav-item"><a class="nav-link" href="{% url 'favourites' %}">{{ user.username }}</a></li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'monthly_weather_view' %}">MeteoStat Monthly Weather</a></li>
+>>>>>>> 1254c3183c42997190839d0d0b44aa8320ea6a39
                     <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Log Out</a></li>
                     {% else %}
                     <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Log In</a></li>
