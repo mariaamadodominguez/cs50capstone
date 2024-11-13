@@ -9,8 +9,6 @@
     <div id = 'error-msg' class = 'alert alert-warning'>{{ error }}</div>
 {% endif %}
 
-<p id="current-geopos"></p>    
-
 {% if page_name == 'current'%}
 <div class ="p-1 my-1 bg-white text-dark">
     <form method="post">
@@ -25,68 +23,50 @@
 </div>    
 {% endif %}
 
-{% if avg_temp %}
-    <p>Average Temperature: {{ avg_temp }}°C</p>
-{% endif %}
-
 {% if weather_data %}
 <div id="current-view" class ="p-1 my-1 bg-white text-dark border border-secondary">  
-
-    <h3 class="period" style="padding-left:10px">
-        {{weather_data.name}}
-        {{ weather_data.temperature }}°C 
-        <span style='text-transform:capitalize;'>{{ weather_data.description }}</span>
-        <img src = "https://openweathermap.org/img/wn/{{weather_data.icon}}.png">        
-
-    </h3>  
+    <div class="period" style="padding-left:10px"> 
+    <h3 >{{weather_data.name}}</h3>  
+    <span class="fs-1">{{ weather_data.temperature }}°</span>
+    <img src = "https://openweathermap.org/img/wn/{{weather_data.icon}}.png" style="vertical-align: bottom;">        
+    <span class="fs-4" style='text-transform:capitalize;'>{{ weather_data.description }}</span>    
+    <p class="fs-5 mb-0">Feels like {{weather_data.feels_like }}° </p>      
+    <span class="fs-5">High: {{ weather_data.temp_min}}° </span>
+    <span class="fs-5">Low: {{ weather_data.temp_max}}°</span>     
+    </div>
      
     <div style="display:none;"><span id="city-lat">{{ lat }}</span><span id="city-lon">{{ lon }}</span></div>                
     
-    <div class='p-2'>
-        <span>Feels like: {{weather_data.feels_like }}°C </span>
-        <span>Min. {{ weather_data.temp_min}}°C </span>
-        <span>Max. {{ weather_data.temp_max}}°C</span>
-    </div>
-<<<<<<< HEAD
+    
     <ul class="fa-ul">        
         <li><div class="tooltip"><i class="fa-li fa fa-tint " aria-hidden="true"></i>
             {{weather_data.humidity}}%
             <span class="tooltiptext">Humidity</span>  </div>
         </li>
         <li><div class="tooltip"><i class="fa-li fa fa-location-arrow" aria-hidden="true"></i>                 
-        {{weather_data.wind}} m/s - <span id="wind-deg">{{weather_data.wind_deg}}</span>º
-            <span class="tooltiptext">Wind</span></div>
+            {{weather_data.wind}} m/s - <span id="wind-deg">{{weather_data.wind_deg}}</span>
+            <span class="tooltiptext">Wind speed / direction</span></div>
         </li>        
         <li><div class="tooltip"><i class="fa-li fa fa-cloud" aria-hidden="true"></i>
               {{weather_data.clouds}}%
-            <span class="tooltiptext">Clouds</span></div>
+            <span class="tooltiptext">Cloudiness</span></div>
         </li>        
         <li><div class="tooltip"><i class="fa-li fa fa-eye" aria-hidden="true"></i>              
             {{weather_data.visibility}}Km
-            <span class="tooltiptext">Visibility</span></div>
+            <span class="tooltiptext">Visibility, The maximum value is 10 km</span></div>
         </li>        
+         <li><div class="tooltip"><i class="fa-li fa fa-umbrella" aria-hidden="true"></i>              
+            {{weather_data.rain}}mm/h
+            <span class="tooltiptext">Precipitation, mm/h</span></div>
+        </li>   
         <li><div class="tooltip"><i class="fa-li fa fa-check" aria-hidden="true"></i>  
             {{weather_data.pressure}} hPa 
-        (Sea Level: {{weather_data.sea_level}} -Grnd Level: {{weather_data.grnd_level}})
-            <span class="tooltiptext"> Pressure</span></div>
+            (Ground Level: {{weather_data.grnd_level}})
+            <span class="tooltiptext"> Atmospheric pressure on the sea level</span></div>
         </li>
     </ul>     
-    
-=======
+     
 
-    <ul class="fa-ul">        
-        <li><i class="fa-li fa fa-tint " aria-hidden="true"></i> Humidity: {{weather_data.humidity}}%</li>
-        <li><i class="fa-li fa fa-location-arrow" aria-hidden="true"></i> 
-        {{weather_data.wind}} m/s - <span id="wind-deg">{{weather_data.wind_deg}}</span>º <span id="wind-dir"></span>  
-        </li>        
-
-        <li><i class="fa-li fa fa-cloud" aria-hidden="true"></i>{{weather_data.clouds}}%</li>
-        <li><i class="fa-li fa fa-eye" aria-hidden="true"></i>Visibility: {{weather_data.visibility}}Km</li>        
-        <li><i class="fa-li fa fa-check" aria-hidden="true"></i> Pressure: {{weather_data.pressure}} hPa 
-        (Sea Level: {{weather_data.sea_level}} -Grnd Level: {{weather_data.grnd_level}})
-        </li>
-    </ul>     
->>>>>>> 1254c3183c42997190839d0d0b44aa8320ea6a39
     <div class='p-2'>
         <span>Sunrise {{ weather_data.sunrise|date:"H:i" }}</span> 
         <span>Sunset {{ weather_data.sunset|time:"H:i"  }} GMT {{ weather_data.timezone}}</span>
@@ -107,14 +87,7 @@
 
 <div id="forecast-view" class="p-1 bg-white text-dark border border-secondary" style="display:none;"></div>
 
-<div id="monthly-weather-view" class="p-1 bg-white text-dark border border-secondary" style="display:none;">
-{% if graph %}
-    <div id="current-view" class ="p-1 my-1 bg-white text-dark border border-secondary">  
-        {{graph|safe}}
-    </div>        
-{% endif %}
-</div>
-
+<div id="monthly-weather-view" class="p-1 bg-white text-dark border border-secondary" style="display:none;"></div>
 
 {% if page_name == 'cityweather'  %}
 {% block script %}

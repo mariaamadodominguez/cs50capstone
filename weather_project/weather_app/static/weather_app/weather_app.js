@@ -11,9 +11,7 @@ document.addEventListener('DOMContentLoaded', function() {
       addFavourite(_btn.dataset.id));            
     })  
  
-    const current_pos = document.getElementById("current-geopos");
-    console.log(current_pos);
-
+    
     function getLocation() {
         console.log('Geolocation is supported by this browser?');
         console.log("sessionStorage.geolocation", sessionStorage.geolocation);
@@ -27,6 +25,8 @@ document.addEventListener('DOMContentLoaded', function() {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(success);
             } else {
+                const current_pos = document.getElementById("current-geopos");
+                console.log(current_pos);
                 current_pos.innerHTML = "Geolocation is not supported by this browser.";
             }
         }
@@ -59,10 +59,10 @@ document.addEventListener('DOMContentLoaded', function() {
             document.querySelector('#crnt-name').innerHTML = result.weather_data.name;                                           
             
             document.querySelector('#crnt-description').innerHTML = result.weather_data.description;           
-            document.querySelector('#crnt-temperature').innerHTML = result.weather_data.temperature;  
-            document.querySelector('#crnt-feels').innerHTML = "Feels like "+ result.weather_data.feels_like + '°C';
-            document.querySelector('#crnt-mintemp').innerHTML = "Min." + result.weather_data.temp_min + '°C' ;
-            document.querySelector('#crnt-maxtemp').innerHTML = "Max." + result.weather_data.temp_max + '°C' ;
+            document.querySelector('#crnt-temperature').innerHTML = result.weather_data.temperature + '°';  
+            document.querySelector('#crnt-feels').innerHTML = "Feels like "+ result.weather_data.feels_like + '°';
+            document.querySelector('#crnt-mintemp').innerHTML = "Low:" + result.weather_data.temp_min + '°' ;
+            document.querySelector('#crnt-maxtemp').innerHTML = "High:" + result.weather_data.temp_max + '°' ;
                         
             })          
         .catch(error => {
@@ -73,9 +73,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }   
  
     function cityWeather(city_id) {
-        //OPEN_WEATHER_KEY = 'a04aaf2aec23e50b409641a9bfc3def9';
-        //api_key = OPEN_WEATHER_KEY;      
-        //url = `http://api.openweathermap.org/data/2.5/weather?q=${city_name}&appid=${api_key}&units=metric`;
         url = '/cityweather'     
         console.log(url); 
         console.log('lat :'+ document.querySelector(`#lat${city_id}`).innerHTML);
@@ -84,7 +81,6 @@ document.addEventListener('DOMContentLoaded', function() {
             headers: {"X-CSRFToken":document.querySelector('[name=csrfmiddlewaretoken]').value},
             method: 'POST',   
             body: JSON.stringify({
-              //city_name:city_name,              
               lat : document.querySelector(`#lat${city_id}`).innerHTML,
               lon : document.querySelector(`#lon${city_id}`).innerHTML,
               })

@@ -13,7 +13,9 @@ document.addEventListener('DOMContentLoaded', () => {
     function airpollution() {
         url = '/airpollution';        
         city_lat = document.querySelector(`#city-lat`).innerHTML;
-        city_lon = document.querySelector(`#city-lon`).innerHTML;        
+        city_lon = document.querySelector(`#city-lon`).innerHTML;       
+        document.querySelector('#error-msg').style.display = 'none';
+        document.querySelector('#error-msg').innerHTML= '';    
         fetch(url,{
             headers: {"X-CSRFToken":document.querySelector('[name=csrfmiddlewaretoken]').value},
             method: 'POST',   

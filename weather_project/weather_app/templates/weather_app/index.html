@@ -3,26 +3,23 @@
 
 {% block body %}
 
-<h2 id="page-title">{{ title }}</h2>    
-<div id="current-geopos">
+<div id="current-geopos" class="period" style="padding-left:10px">
     {% csrf_token %}
+    <p class="fw-medium mb-0 ">Now</p>
     <span  id="temp{{city.id}}">
-        <h3><img id="crnt-icon" style="background-color: #0099ff;"> 
-        <span id="crnt-name"></span></h3> 
-        <h5><span id="crnt-temperature"></span>
-        <span style='text-transform:capitalize;' id="crnt-description"></span></h5>    
-        <div>
-        <span id="crnt-feels"></span>
-        <span id="crnt-mintemp"></span>
-        <span id="crnt-maxtemp"></span>
-        </div>
+        <h3><span id="crnt-name"></span></h3>         
+        <span class="fs-1" id="crnt-temperature"></span>
+        <img id="crnt-icon" style="vertical-align: bottom;"> 
+        <span class="fs-4" style='text-transform:capitalize;' id="crnt-description"></span>  
+        <p class="fs-5 mb-0" id="crnt-feels"></p>
+        <span class="fs-5" id="crnt-mintemp"></span>
+        <span class="fs-5" id="crnt-maxtemp"></span>
     </span>                         
 </div>   
-
 <div id = 'error-msg' class = 'alert alert-warning' style="display:none;";></div>
-
-{% if user.is_authenticated %}
-<div id="cities-view"> {{ page_name }}
+{% if page_name != 'index' %}
+<div id="cities-view"> 
+    <h2 id="page-title">{{ title }}</h2>    
     {% for city in page_obj %}                  
         <div class ="p-1 my-1 bg-white text-dark border border-secondary">                          
             <div id="weather{{city.id}}">                
@@ -53,7 +50,7 @@
             </div>            
         </div>                        
     {% empty %}
-        <div>*** No cities yet***</div>
+        <div>*** No cities registered yet***</div>
     {% endfor %}
 </div>     
 <nav aria-label="Page navigation">

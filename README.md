@@ -8,3 +8,7 @@ DATABASES
 JAVASCRIPT
 DJANGO
 ...
+requests 
+pandas
+matplotlib
+meteostat

@@ -35,7 +35,6 @@
     color: #fff;
     text-align: left;
     caption-side: bottom;
-<<<<<<< HEAD
   }
 
   /* Target the font awesome icon */
@@ -63,13 +62,12 @@
   color: #007bff;
   text-align: center;
   margin-left: 5px;
-  /* Position the tooltip */
-  position: absolute;
+  /* Position the tooltip 
+  position: absolute;*/
   z-index: 1;
 }
 .tooltip:hover .tooltiptext {
   visibility: visible;
 }
-=======
-  }
->>>>>>> 1254c3183c42997190839d0d0b44aa8320ea6a39
+  
+

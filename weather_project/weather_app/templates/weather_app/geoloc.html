@@ -30,10 +30,10 @@
         <button id="{{ forloop.counter0 }}" type="submit" class="save-button button">Save</button>
     {% endif %}                                
     <ul>
-    <li>Lat:<span id="lat{{ forloop.counter0 }}"> {{gdcity.lat}}</span></li>        
-    <li>Lon:<span id="lon{{ forloop.counter0 }}">{{gdcity.lon}}</span></li>
     <li>Country:<span id="country{{ forloop.counter0 }}"> {{ gdcity.country }}</span></li>
     <li>State:<span id="state{{ forloop.counter0 }}"> {{ gdcity.state }}</span></li>
+    <li>Lat:<span id="lat{{ forloop.counter0 }}"> {{gdcity.lat}}</span></li>        
+    <li>Lon:<span id="lon{{ forloop.counter0 }}">{{gdcity.lon}}</span></li>
 </div>    
     {% endfor %}    
 {% endif %}

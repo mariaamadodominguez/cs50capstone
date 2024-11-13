@@ -55,14 +55,17 @@ def fetch_weather_data(lat, lon, city):
     
     response = requests.get(url)
     data = response.json()    
+
     try:
-        visibility = data['visibility']/1000        
-    except Exception as e:
-        raise
-    else:
-        pass
-    finally:
-        pass
+        visibility = data['visibility']/1000                
+    except KeyError:
+        visibility = 0
+
+    try:
+        rain = data['rain']['1h']                
+    except KeyError:
+        rain = 0
+        
     return {
         'description': data['weather'][0]['description'],
         'icon':data['weather'][0]['icon'],
@@ -74,7 +77,8 @@ def fetch_weather_data(lat, lon, city):
         'grnd_level': data['main']['grnd_level'],
         'humidity': data['main']['humidity'],
         'pressure': data['main']['pressure'],
-        'visibility':data['visibility']/1000,
+        'visibility':visibility,
+        'rain':rain,
         'wind': round(data['wind']['speed']),
         'wind_deg':round(data['wind']['deg']),
         'clouds':round(data['clouds']['all']),
@@ -82,12 +86,10 @@ def fetch_weather_data(lat, lon, city):
         'sunset': datetime.fromtimestamp(data['sys']['sunset'], tz=timezone.utc), #Sunset time, unix, UTC,
         'timezone':data['timezone'], #Shift in seconds from UTC
         'name': data['name']
-<<<<<<< HEAD
-        }
-=======
-    }
 
->>>>>>> 1254c3183c42997190839d0d0b44aa8320ea6a39
+        }
+
+
 def fetch_geo_data(city, limit):
     api_key = settings.OPEN_WEATHER_KEY
     url = f'http://api.openweathermap.org/geo/1.0/direct?q=={city}&appid={api_key}&limit={limit}'
@@ -113,32 +115,31 @@ def index(request):
         page_obj = p.get_page(page_number)
     
         return render(request, "weather_app/index.html", {
-        'title':"Current Weather",
-        "page_name": 'All Cities',        
+        'title':"All Places",
+        "page_name": 'allplaces',        
         'page_obj':page_obj,
         })
     # Everyone else 
     else:
         return render(request, 'weather_app/index.html', {
         'title':"Current Weather",
-        "page_name": 'current'
+        "page_name": 'index'
         })        
 
 def favourites(request):    
     
-<<<<<<< HEAD
     # Filter cities returned based on favourites:
     user = WUser.objects.filter(id = request.user.id)    
     fav_cities = City.objects.filter(id__in=user.values_list("favouritesList", flat=True))                    
     
     # Return all user favourite cities
-=======
+
     # Filter post returned based on following":
     user = WUser.objects.filter(id = request.user.id)    
     fav_cities = City.objects.filter(id__in=user.values_list("favouritesList", flat=True))                    
     
     # Return post in reverse chronologial order
->>>>>>> 1254c3183c42997190839d0d0b44aa8320ea6a39
+
     fav_cities = fav_cities.order_by("-pk").all()
 
     p = Paginator(fav_cities, 10)
@@ -146,8 +147,8 @@ def favourites(request):
     page_obj = p.get_page(page_number)
 
     return render(request, "weather_app/index.html", {
-        'title':"Current Weather",
-        "page_name": 'Favourite Cities',        
+        'title':"Your Favourites Places",
+        "page_name": 'favourites',        
         'page_obj':page_obj,
         })    
 
@@ -256,14 +257,14 @@ def weather(request):
                 weather_data['sunset'] = weather_data['sunset']+ timedelta(0,weather_data['timezone'])         
                 weather_data['timezone'] = round(weather_data['timezone']/3600,0)
                 return render(request, 'weather_app/weather.html', {
-                    "title": 'City Weather',
+                    "title": 'Search City',
                     "page_name": "current",
                     'weather_data': weather_data, 
                     'form': form
                     })
             except:
                 return render(request, 'weather_app/weather.html', {
-                    "title": 'City Weather',
+                    "title": 'Search City',
                     "page_name": "current",
                     "error": "City not found!",
                     'form': form
@@ -271,7 +272,7 @@ def weather(request):
     else:
         form = CityForm()
     return render(request, 'weather_app/weather.html', {
-        "title": 'City Weather',
+        "title": 'Search City',
         "page_name": "current",                
         'form': form
         })
@@ -287,9 +288,7 @@ def weatherhistory_view(request):
     data = json.loads(request.body)    
     lat = float(data.get('lat',''))
     lon = float(data.get('lon',''))
-    #lat = -33.4377756 
-    #lon = -70.6504502
-
+    
     start = pd.Timestamp(data.get('dtStart',''))
     end = pd.Timestamp(data.get('dtEnd',''))
 
@@ -306,18 +305,18 @@ def weatherhistory_view(request):
             return JsonResponse( {'cod': 400, "message": 'empty'})            
         else:            
             #-- Plot line chart including average, minimum and maximum temperature
-            Monthly_data.plot(y=['tmin', 'tmax','tavg'])
+            Monthly_data.plot(y=['tmin', 'tmax','tavg'], figsize=(10, 10,))
             label = str(list(station.name)[0])+"-"+str(list(station.region)[0])+"/"+str(list(station.country)[0])
-            plt.title(label)
+            #plt.title(label)
+            plt.title(f'{label} {data.get('dtStart','')} - {data.get('dtEnd','')}',)
             plt.xlabel('MeteoStat Monthly Data')
             plt.ylabel('Temp [min/max/avg]')
-                                    
             imgdata = StringIO()
             plt.savefig(imgdata, format='svg')
                     
             imgdata.seek(0)     
             data = imgdata.getvalue()
-            return JsonResponse( {'cod': 200, 'graph': data,})            
+            return JsonResponse( {'cod': 200, 'graph': data,'data':Monthly_data.to_json()})            
         
         
     except IntegrityError:
@@ -352,21 +351,20 @@ def monthly_weather_view(request):
                     Monthly_data = Monthly_data.fetch()
                    
                     #-- Plot line chart including average, minimum and maximum temperature
-                    Monthly_data.plot(y=['tmin', 'tmax','tavg'])
+                    Monthly_data.plot(y=['tmin', 'tmax','tavg'], figsize=(10, 10,))
                     label = str(list(station.name)[0])+"-"+str(list(station.region)[0])+"/"+str(list(station.country)[0])
                     
-                    plt.title(f'{label} - {gdcity['lat']}{gdcity['lon']} {form.cleaned_data['dtStart']} - {form.cleaned_data['dtEnd']}',)
+                    plt.title(f'{label} {form.cleaned_data['dtStart']} - {form.cleaned_data['dtEnd']}',)
                     plt.xlabel('MeteoStat Monthly Data')
                     plt.ylabel('Temp [min/max/avg]')
                                     
                     imgdata = StringIO()
                     plt.savefig(imgdata, format='svg')
-                    
                     imgdata.seek(0)     
                     data = imgdata.getvalue()
                     context = {
                         "title": 'MeteoStat Monthly Weather',
-                        "page_name": "current",
+                        "page_name": "meteostat",
                         'form': form, 
                         'graph': data
                         }
@@ -374,21 +372,21 @@ def monthly_weather_view(request):
                 else:
                     return render(request, 'weather_app/monthlyweather.html', {
                         "title": 'MeteoStat Monthly Weather',
-                        "page_name": "current",
+                        "page_name": "meteostat",
                         "error": f'Geodata for {current_city} not found!',
                         'form': form
                     })    
             except:
                 return render(request, 'weather_app/monthlyweather.html', {
                     "title": 'MeteoStat Monthly Weather',
-                    "page_name": "current",
+                    "page_name": "meteostat",
                     "error": f'No data for {current_city}!',
                     'form': form
                 })
     else:
         form = MonthlyNormalsForm()
     return render(request, 'weather_app/monthlyweather.html',{ 
-        "title": 'Monthly Weather',
+        "title": 'MeteoStat Monthly Weather',
         "page_name": "current",
         'form': form
         })

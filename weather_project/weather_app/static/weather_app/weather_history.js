@@ -15,9 +15,13 @@ function weather_history() {
     url = '/weatherhistory';
         console.log(url); 
         city_lat = document.querySelector(`#city-lat`).innerHTML;
-        city_lon = document.querySelector(`#city-lon`).innerHTML;        
-        const dtEnd = new Date(); 
-        const dtStart = new Date(dtEnd.getFullYear()-1, dtEnd.getMonth(), dtEnd.getDate());
+        city_lon = document.querySelector(`#city-lon`).innerHTML;    
+        document.querySelector('#error-msg').style.display = 'none';
+        document.querySelector('#error-msg').innerHTML= '';       
+        const dtEnd = new Date();        
+        const dtStart= new Date(dtEnd);
+        dtStart.setDate(dtStart.getDate() - 365);
+
         console.log('dtStart', dtStart.toDateString('YYYMMDD'), 'dtEnd', dtEnd.toDateString('YYYMMDD'));
         console.log('city_lat', city_lat, 'city_lon', city_lon);
         fetch(url,{
