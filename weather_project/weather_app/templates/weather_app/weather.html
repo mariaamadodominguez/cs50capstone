@@ -4,9 +4,10 @@
 {% block body %}
 <h2 id="page-title" >{{ title }}</h2>    
 
-<div id = 'error-msg' class = 'alert alert-warning' style="display:none;"></div>
 {% if error %}
     <div id = 'error-msg' class = 'alert alert-warning'>{{ error }}</div>
+{% else %}    
+    <div id = 'error-msg' class = 'alert alert-warning' style="display:none;";></div>    
 {% endif %}
 
 {% if page_name == 'current'%}
@@ -17,7 +18,7 @@
             {{ form.as_p }}
         </div class="form-group">
         <div class="form-group">
-            <button type="submit" class="btn btn-primary">Current Weather</button>
+            <button type="submit" class="btn btn-primary">Get Weather</button>
         </div>                           
     </form>
 </div>    

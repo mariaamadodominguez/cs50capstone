@@ -69,5 +69,13 @@
 .tooltip:hover .tooltiptext {
   visibility: visible;
 }
-  
 
+.fav-button  {
+                float: right;
+        }
+.fixed-footer {
+  position: sticky;
+  bottom: 0px;
+  padding: 16px 10px;
+  text-align:center;
+}

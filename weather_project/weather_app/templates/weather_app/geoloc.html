@@ -6,22 +6,21 @@
 
 {% if error %}
     <div id = 'error-msg' class = 'alert alert-warning'>{{ error }}</div>
+{% else %}    
+    <div id = 'error-msg' class = 'alert alert-warning' style="display:none;";></div>    
 {% endif %}
-
-<div id = 'error-msg' class = 'alert alert-warning' style="display:none;";></div>
-<div class ="p-1 my-1 bg-white text-dark">
-
 <form method="post">
     {% csrf_token %}
     <div class="form-group">
         {{ form.as_p }}
-    </div class="form-group">
+    </div>
     <div class="form-group">
         <button type="submit" class="btn btn-primary">Get Geo</button>
     </div>     
     
 </form>
 {% if geo_data %}
+<div class='container'>
     {% for gdcity in geo_data.data %}
 <div class ="p-1 my-1 bg-white text-dark border border-secondary">  
     <h3 id="name{{ forloop.counter0 }}">{{ gdcity.name }}</h3>    
@@ -34,9 +33,12 @@
     <li>State:<span id="state{{ forloop.counter0 }}"> {{ gdcity.state }}</span></li>
     <li>Lat:<span id="lat{{ forloop.counter0 }}"> {{gdcity.lat}}</span></li>        
     <li>Lon:<span id="lon{{ forloop.counter0 }}">{{gdcity.lon}}</span></li>
+    </ul>
 </div>    
     {% endfor %}    
+</div>
 {% endif %}
+
 {% if user.is_authenticated  %}
 {% block script %}
     <script src="{% static 'weather_app/geoloc.js' %}"></script>

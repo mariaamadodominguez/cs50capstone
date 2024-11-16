@@ -16,6 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
         city_lon = document.querySelector(`#city-lon`).innerHTML;       
         document.querySelector('#error-msg').style.display = 'none';
         document.querySelector('#error-msg').innerHTML= '';    
+        console.log("url:", url, "lat:", city_lat, "lon", city_lon);
         fetch(url,{
             headers: {"X-CSRFToken":document.querySelector('[name=csrfmiddlewaretoken]').value},
             method: 'POST',   

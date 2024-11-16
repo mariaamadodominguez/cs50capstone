@@ -17,7 +17,7 @@ from meteostat import Stations, Monthly
 
 def fetch_air_pollution(lat, lon):
     api_key = settings.OPEN_WEATHER_KEY
-    url = f'http://api.openweathermap.org/data/2.5/air_pollution?lat=50&lon=50&appid={api_key}'
+    url = f'http://api.openweathermap.org/data/2.5/air_pollution?lat={lat}&lon={lon}&appid={api_key}'
     response = requests.get(url)
     data = response.json()
     return {
@@ -26,7 +26,7 @@ def fetch_air_pollution(lat, lon):
 
 def fetch_air_pollution_forecast(lat, lon):
     api_key = settings.OPEN_WEATHER_KEY
-    url = f'http://api.openweathermap.org/data/2.5/air_pollution/forecast?lat=50&lon=50&appid={api_key}'
+    url = f'http://api.openweathermap.org/data/2.5/air_pollution/forecast?lat={lat}&lon={lon}&appid={api_key}'
     response = requests.get(url)
     data = response.json()
     return {
@@ -257,22 +257,22 @@ def weather(request):
                 weather_data['sunset'] = weather_data['sunset']+ timedelta(0,weather_data['timezone'])         
                 weather_data['timezone'] = round(weather_data['timezone']/3600,0)
                 return render(request, 'weather_app/weather.html', {
-                    "title": 'Search City',
+                    "title": 'Search Location',
                     "page_name": "current",
                     'weather_data': weather_data, 
                     'form': form
                     })
             except:
                 return render(request, 'weather_app/weather.html', {
-                    "title": 'Search City',
+                    "title": 'Search Location',
                     "page_name": "current",
-                    "error": "City not found!",
+                    "error": "Location not found!",
                     'form': form
                 })
     else:
         form = CityForm()
     return render(request, 'weather_app/weather.html', {
-        "title": 'Search City',
+        "title": 'Search Location',
         "page_name": "current",                
         'form': form
         })
@@ -445,8 +445,8 @@ def addFavourite(request):
 
     try:
         city = City.objects.get(pk=city_id)
-    except User.DoesNotExist:
-        raise Http404("City not found.")
+    except City.DoesNotExist:
+        raise Http404("Location not found in list.")
 
     currentUser = WUser.objects.get(pk=request.user.id)
     if city in currentUser.favouritesList.all():    

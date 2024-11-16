@@ -1,16 +1,17 @@
+
 document.addEventListener('DOMContentLoaded', function() {
     var weather_btns = Array.from(document.getElementsByClassName('weather-button')) ;
     weather_btns.forEach(_btn => {    
       document.getElementById(_btn.id).addEventListener('click', () =>                  
         cityWeather(_btn.id));            
-      })  
+        })  
 
-    var fav_btns = Array.from(document.getElementsByClassName('fav-button')) ;
+    var fav_btns = Array.from(document.getElementsByClassName('fav-button')) ;    
     fav_btns.forEach(_btn => {    
-    document.getElementById(_btn.id).addEventListener('click', () =>                  
-      addFavourite(_btn.dataset.id));            
-    })  
- 
+        document.getElementById(_btn.id).addEventListener('click', () => {
+            addFavourite(_btn.dataset.id);                                   
+            })
+        })  
     
     function getLocation() {
         console.log('Geolocation is supported by this browser?');
@@ -72,6 +73,10 @@ document.addEventListener('DOMContentLoaded', function() {
             });         
     }   
  
+
+    getLocation();
+}) 
+
     function cityWeather(city_id) {
         url = '/cityweather'     
         console.log(url); 
@@ -113,8 +118,9 @@ document.addEventListener('DOMContentLoaded', function() {
         .then((result) => {      
           if (result['userFav'])          
             document.querySelector(`#fav-icon${city_id}`).style = "color:red";        
-          else          
-            document.querySelector(`#fav-icon${city_id}`).style = "color:gray"
+          else  {                   
+            document.querySelector(`#fav-icon${city_id}`).style = "color:gray";
+            }
         })          
         .catch(error => {
             console.log(error);                  
@@ -122,6 +128,4 @@ document.addEventListener('DOMContentLoaded', function() {
             document.querySelector('#error-msg').innerHTML= error;                  
         }); 
     }      
-
-    getLocation();
-}) 
+        
