@@ -1,0 +1,75 @@
+{% extends "weather_app/layout.html" %}
+{% load static %}
+
+{% block body %}
+
+<div id="current-geopos" class="period">
+    {% csrf_token %}
+    <p class="fw-medium mb-0 ">Now</p>
+    <span  id="temp{{city.id}}">
+        <h3><span id="crnt-name"></span></h3>         
+        <span class="fs-1" id="crnt-temperature"></span>
+        <img id="crnt-icon" style="vertical-align: bottom;"> 
+        <span class="fs-4" style='text-transform:capitalize;' id="crnt-description"></span>  
+        <p class="fs-5 mb-0" id="crnt-feels"></p>
+        <span class="fs-5" id="crnt-mintemp"></span>
+        <span class="fs-5" id="crnt-maxtemp"></span>
+    </span>                         
+</div>   
+<div id = 'error-msg' class = 'alert alert-warning' style = "display:none;"></div>
+{% if page_name != 'index' %}
+<div id="cities-view"> 
+    <h2 id="page-title">{{ title }}</h2>    
+    <nav aria-label="Page navigation">
+    <ul class="pagination">
+    {% if page_obj.has_previous %}        
+      <li class="page-item"><a class="page-link" href="?page=1"><span aria-hidden="true">&laquo; </span>First</a></li>
+      <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">{{ page_obj.previous_page_number }}</a></li>
+    {% endif %}      
+    <li class="page-item  active" aria-current="page"><a class="page-link" href="?page={{ page_obj.number }}"> {{ page_obj.number }}</a></li>    
+    {% if page_obj.has_next %}
+      <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">{{ page_obj.next_page_number }}</a></li>
+      <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Last<span aria-hidden="true"> &raquo;</span></a></li>
+    </ul>
+    {% endif %}      
+    </nav>
+    {% for city in page_obj %}                  
+        <div class ="p-1 my-1 bg-white text-dark border border-secondary">                          
+            <div id="weather{{city.id}}">       
+                <div>         
+                    <a href = "{% url 'currentweather' city.id %}">{{ city.city }}</a>
+                    {% csrf_token %}                
+                    <span id="fav-btn{{city.id}}" class="fav-button" data-id="{{city.id}}">                
+                    {% if city in user.favouritesList.all %}
+                    <i id="fav-icon{{city.id}}" style="color:red" class="fa fa-heart"></i>
+                    {% else %}
+                    <i id="fav-icon{{city.id}}" style="color:grey" class="fa fa-heart"></i>
+                    {% endif %}
+                    </span>      
+                    {% csrf_token %}                
+                    <span id="{{city.id}}" class="weather-button" data-id="{{city.city}}">
+                    <i id="w-icon{{city.id }}" class="fa fa-thermometer"></i></span>                                                                
+                    <span  id="temp{{city.id}}">
+                        <span id="temperature{{city.id}}"></span>                    
+                        <span id="description{{city.id}}"></span>
+                        <img id="icon{{city.id}}" style="background-color: silver;">  
+                    </span>                                         
+                </div>                    
+            </div>
+            <div id="geo{{city.id}}">{{ city.state }} {{ city.country }}
+                <span id="lat{{city.id}}">{{ city.lat }}</span> 
+                <span id="lon{{city.id}}">{{ city.lon }}</span>                 
+            </div>            
+        </div>                        
+    {% empty %}
+        <div>*** No locations registered yet***</div>
+    {% endfor %}
+</div>     
+{% endif %}
+
+{% block script %}
+<script src="{% static 'weather_app/weather_app.js' %}"></script>
+{% endblock %}
+
+   
+{% endblock %}

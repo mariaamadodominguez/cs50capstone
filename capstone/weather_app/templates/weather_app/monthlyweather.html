@@ -1,0 +1,32 @@
+{% extends "weather_app/layout.html" %}
+{% load static %}
+
+{% block body %}
+<h2 id="page-title">{{ title }}</h2>    
+
+{% if error %}
+    <div id = 'error-msg' class = 'alert alert-warning'>{{ error }}</div>
+{% endif %}
+
+<div class ="p-1 my-1 bg-white text-dark">
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            {{ form.as_p }}
+        </div class="form-group">
+        <div class="form-group">
+            <button type="submit" id='monthly-btn' class="btn btn-primary">Get Monthly Data</button>
+        </div>                           
+    </form>
+</div>    
+
+
+{% if graph %}
+<div id="current-view" class ="p-1 my-1 bg-white text-dark border border-secondary">  
+    {{graph|safe}}
+</div>        
+{% endif %}
+
+
+
+{% endblock %}
