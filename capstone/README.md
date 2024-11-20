@@ -2,10 +2,28 @@
 My final project is not a creative one, i just try to show any of the skills and tools that I've learnt during the 
 Harvard's CS50 Web Programming with Python and JavaScript course. I used pyton *PYTHON*, *JavaScript*, *HTML5*,  *CSS*, *BOOTSTRAP*
 
-It is a weather forecast-like site that allows users to save their favourite locations, get 5 days forecast, air pollution info and 12 month history records. 
+It is a weather forecast-like site with the followin funcionality:
+
+- Ease search for locations working with geographic names and coordinates. Users signed up can save as many places as they want. 
+- Access current weather data for any location on Earth, collecting and processing weather data from weather stations 
+- Current air pollution data for the saved locations 
+- 5 days forecast data with 3-hour step for the saved locations
+- Graphic 12 month (or anyother period desired) history records.  
+
+# Distinctiveness and Complexity
+In addition to what I learned with CS50 Web, I have incorporated pandas and matplot lib to process the Meteostat information, which makes my project something different from the previous projects in the course.
+
+The complexity:
+-Conversions 
+-- Time of data calculation, unix, UTC to datetime
+-- Time to local time - Shift in seconds from UTC 
+-- Javascript routine to convert Wind degrees to compass directions   
+- Django Paginator
+- Integrate Meteostat long-term time series of weather stationsusing Pandas.
+- A Matplotlib line chart plot including the average, minimum and maximum temperature, converting the output to an SVG path using StringIO, thus avoiding writing file-like objects to disk.
 
 ## Set up enviromment
-Django
+Django 
 Sqlite
 
 ### External modules
@@ -13,6 +31,7 @@ requests
 pandas
 matplotlib (pyplot)
 meteostat (Stations, Monthly)
+
 ### API endpoints from openweather.org
 /currentweather - Current weather data. Access current weather data for any location
 /forecast - 5 day weather forecast. Weather forecast for 5 days with data every 3 hours by geographic coordinates.
@@ -27,6 +46,7 @@ City model - The geoloc info
 ## *Forms*
 Three django forms for city weather, geo location and monthly history weather
 CityForm, GeoCityForm, MonthlyNormalsForm
+
 
 # User authentication (sign up, login, log out)
 
