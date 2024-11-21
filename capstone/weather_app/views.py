@@ -132,13 +132,10 @@ def favourites(request):
     user = WUser.objects.filter(id = request.user.id)    
     fav_cities = City.objects.filter(id__in=user.values_list("favouritesList", flat=True))                    
     
-    # Return all user favourite cities
-
-    # Filter post returned based on following":
     user = WUser.objects.filter(id = request.user.id)    
     fav_cities = City.objects.filter(id__in=user.values_list("favouritesList", flat=True))                    
     
-    # Return post in reverse chronologial order
+    # Return all user favourites
 
     fav_cities = fav_cities.order_by("-pk").all()
 
@@ -292,7 +289,7 @@ def weatherhistory_view(request):
     start = pd.Timestamp(data.get('dtStart',''))
     end = pd.Timestamp(data.get('dtEnd',''))
 
-    # Fetch weather data from API (pseudo-code)      
+    # Fetch weather data from API   
     try:                                
         stations = Stations()
         stations = stations.nearby(lat, lon)
@@ -307,7 +304,7 @@ def weatherhistory_view(request):
             #-- Plot line chart including average, minimum and maximum temperature
             Monthly_data.plot(y=['tmin', 'tmax','tavg'], figsize=(10, 10,))
             label = str(list(station.name)[0])+"-"+str(list(station.region)[0])+"/"+str(list(station.country)[0])
-            #plt.title(label)
+            
             plt.title(f'{label} {data.get('dtStart','')} - {data.get('dtEnd','')}',)
             plt.xlabel('MeteoStat Monthly Data')
             plt.ylabel('Temp [min/max/avg]')
@@ -339,7 +336,7 @@ def monthly_weather_view(request):
                     current_city_lon= gdcity['lon'] 
                     current_city_lat=  gdcity['lat'] 
             
-                    # Fetch weather data from API (pseudo-code)            
+                    # Fetch weather data from API            
                     stations = Stations()
                     stations = stations.nearby(current_city_lat, current_city_lon)
                     station = stations.fetch(1)
