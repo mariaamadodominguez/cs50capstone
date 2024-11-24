@@ -2,7 +2,7 @@ import json
 from io import StringIO
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
-from django.http import HttpResponseRedirect, JsonResponse
+from django.http import HttpResponseRedirect, JsonResponse, Http404
 from django.shortcuts import render
 from django.urls import reverse
 from .forms import CityForm, GeoCityForm, MonthlyNormalsForm
@@ -231,17 +231,22 @@ def geo_view(request):
 
 def currentweather(request, id):
     if request.method == "GET":     
-        city = City.objects.get(pk=id)     
-        weather_data = fetch_weather_data(city.lat, city.lon, '')
-        weather_data['sunrise'] = weather_data['sunrise']+ timedelta(0,weather_data['timezone']) 
-        weather_data['sunset'] = weather_data['sunset']+ timedelta(0,weather_data['timezone'])         
-        weather_data['timezone'] = round(weather_data['timezone']/3600,0)
-        return render(request, 'weather_app/weather.html', {
-            "title": city.city+'-'+city.state,            
-            "lat":city.lat,
-            "lon":city.lon,
-            "page_name": 'cityweather',                
-            'weather_data': weather_data})
+        try:
+            city = City.objects.get(pk=id)     
+            weather_data = fetch_weather_data(city.lat, city.lon, '')
+            weather_data['sunrise'] = weather_data['sunrise']+ timedelta(0,weather_data['timezone']) 
+            weather_data['sunset'] = weather_data['sunset']+ timedelta(0,weather_data['timezone'])         
+            weather_data['timezone'] = round(weather_data['timezone']/3600,0)
+            return render(request, 'weather_app/weather.html', {
+                "title": city.city+'-'+city.state,            
+                "lat":city.lat,
+                "lon":city.lon,
+                "page_name": 'cityweather',                
+                'weather_data': weather_data})
+        except Exception as e:
+            raise Http404("Location not found.")
+
+        
     
 def weather(request):
     if request.method == 'POST':
@@ -275,12 +280,15 @@ def weather(request):
         })
 
 def cityweather(request):    
-    data = json.loads(request.body)    
-    lat = data.get('lat','')
-    lon = data.get('lon','')    
-    weather_data = fetch_weather_data(lat,lon, '') 
-    return JsonResponse( {'weather_data': weather_data,})            
-
+    data = json.loads(request.body)
+    try:    
+        lat = data.get('lat','')
+        lon = data.get('lon','')        
+        weather_data = fetch_weather_data(lat,lon, '') 
+        return JsonResponse( {'weather_data': weather_data,})            
+    except:
+        raise Http404("Location not found")
+        
 def weatherhistory_view(request):
     data = json.loads(request.body)    
     lat = float(data.get('lat',''))
@@ -427,8 +435,10 @@ def register(request):
         try:
             user = WUser.objects.create_user(username, email, password)
             user.save()
-        except IntegrityError:
-             return JsonResponse({"error": "Error saving user!"}, status=404)
+        except IntegrityError:            
+            return render(request, "weather_app/register.html", {
+                "message": "User name already taken. Please choose a new one"
+                }) 
        
         login(request, user)
         return HttpResponseRedirect(reverse("index"))

@@ -15,8 +15,13 @@ class City(models.Model):
     state = models.CharField(max_length=100, blank=True)
     zipcode = models.CharField(max_length=5, blank=True)    
     def __str__(self) -> str:
-        return f"{self.city}"   
+        return f"{self.city}"
 
+    def is_valid_city(self):
+        return self.lat >= -90 and self.lat <= 90 and self.lat != 0 and self.lon >= -180 and self.lon <= 180 and self.lon != 0 
+    def is_null_island(self):
+        return self.lat == 0 and self.lon == 0 
+    
 class WUser(AbstractUser):
     favouritesList = models.ManyToManyField(City, blank=True, related_name="userFavourite")         
     def serialize(self):
