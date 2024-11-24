@@ -4,10 +4,6 @@ In my final project I try to show every skill and tools I learned during ***Harv
 
 I used **Django** on the back-end and **JavaScript**, **HTML5**, **CSS** on the front-end. **Bootstrap** makes the application mobile-responsive.
 
-*Models* - This application works with 2 django models on the back-end, one for the geolocation info (City) and the other for users information plus a ManyToManyField "favouritesList" of locations  (WUser)
-
-*Forms* - 3 django forms for city weather (CityForm), geolocation (GeoCityForm) and monthly history weather (MonthlyNormalsForm)
-
 My project is a weather forecast-like site with the following functionality:
 
 - Easily search for locations working with geographic names and coordinates. Users signed up can save as many places as they want
@@ -27,7 +23,38 @@ My project is a weather forecast-like site with the following functionality:
 - Using the Pandas library to integrate long-term time series from Meteostat from the nearest weather station to a given location.
 - Using Matplotlib's line chart that includes average, minimum, and maximum temperature. Save the current figure as an SVG object to be used in a Django framework.
 # Files
-## In weather_app/static/weather_app/
+## capstone (project folder) 
+### asgi.py
+### settings.py
+Django settings for capstone project. Declares 2 keys 
+- OPEN_WEATHER_KEY 
+- URL_ICONS 
+### urls.py
+URL configuration for capstone project.
+### wsgi.py
+## capstone/weather_app/ (app folder)
+### admin.py
+Defines the CityAdmin class with list_display = ("city", "country", "state")
+Registers the (WUser) (City, CityAdmin) and (Time) models
+## apps.py
+Declares name = 'weather_app' in class WeatherAppConfig'    
+### forms.py
+3 django forms for city weather (CityForm), geolocation (GeoCityForm) and monthly history weather (MonthlyNormalsForm)
+### models.py
+This application works with 2 django models on the back-end, one for the geolocation info (City) and the other for users information plus a ManyToManyField "favouritesList" of locations  (WUser)
+### test.py
+A class that extends the TestCase class with a setUp function and 9 test functions for performing Django and Client Testing.
+### urls.py
+The urlpatterns list containing the calls to the path functions from views.py
+### views.py
+Contains all the application API logic, handles incoming requests, and generates responses.
+### README.md
+This file
+### db.sqlite3
+The database
+### manage.py
+### requirements.txt
+## capstone/weather_app/static/weather_app/
 ### air_pollution.js (in *weather.html*)
 - airpollution() calls to openweather.org **/air_pollution** endpoint, using as parameter the latitude and longitude of the location chosen. Besides the Air Quality Index ('Good', 'Fair', 'Moderate', 'Poor', 'Very Poor'), returns the concentration of Carbon monoxide (CO) in μg/m3.
 ### forecast.js (in *weather.html*)
@@ -43,7 +70,7 @@ My project is a weather forecast-like site with the following functionality:
 - weather_history() uses latitude and longitude as parameters to get the meteorological station closest to the chosen location. It then gets the MeteoStat monthly data for the last year for that station and shows it in a graph.
 ### styles.css
 Some additional styles for buttons, tooltips and footer,
-## In weather_app/templates/weather_app/
+## capstone/weather_app/templates/weather_app/
 ### geoloc.html
 Allows the user to search for the geolocation information of a given place,up to 5 results for search. 
 
@@ -112,15 +139,24 @@ Air Quality Index (Good, Fair, Moderate, Poor, Very Poor, Fair) and the Сoncent
 - **History**
 
 A Matplotlib line chart plot including the average, minimum and maximum temperature
-
 # How to run
 ## Set up enviromment
-- Django 
+- Django
 - Sqlite
 - The Meteostat Python package, available through PyPI: pip install meteostat
-
 Meteostat requires Python 3.6 or higher.
 
+1. Clone the repository using the command git clone [https://github.com/mariaamadodominguez/cs50wcapstone.git]
+2. Create a virtual environment for the project 
+a. Install the python3-venv package using the command. 
+$ apt install python3.12-venv
+$ mkdir -p ~/.venvs 
+b. venv will create a virtual Python installation in the .venv
+$ python3 -m venv cs50wenv
+c. Activate the virtual env: source cs50wenv/bin/activate
+3. pip install -r requirements.txt. Django, Pandas, Matplotlib and Requests
+4. Make and apply migrations by running python manage.py makemigrations and python manage.py migrate. 
+5. Run the server using python manage.py runserver
 ## External modules
 - requests 
 - pandas
