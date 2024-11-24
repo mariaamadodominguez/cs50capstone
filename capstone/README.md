@@ -88,29 +88,29 @@ Any user, signed up or not, can search for the current weather data for any loca
 
 Otherwise, all the detailed information about the current weather for a given location is displayed:
 
-    **Temperature**
-    **A descriptive icon of the weather **
-    **Description**     
-    **Feels like** 
-    **Temp High and Low** 
-    **Humidity**
-    **Wind speed** (m/s) and **direction** (converting degrees in directions)
-    **Cloudiness**        
-    **Visibility**, The maximum value is 10 km        
-    **Precipitation**, mm/h
-    **Amospheric pressure** on the sea level and Ground Level
-    **Sunrise** and **sunset** in local time, plus GMT difference
+- **Temperature**
+- **Weather icon**
+- **Description**
+- **Feels like**
+- **Temp High and Low** 
+- **Humidity**
+- **Wind speed** (m/s) and **direction** (converting degrees in directions)
+- **Cloudiness**        
+- **Visibility**, The maximum value is 10 km        
+- **Precipitation**, mm/h
+- **Amospheric pressure** on the sea level and Ground Level
+- **Sunrise** and **sunset** in local time, plus GMT difference
 
 If the user is registered and has chosen one of the already saved locations, there are 3 additional buttons:
 
-- 5 Days Forecast: 
+- **5 Days Forecast**
 
-Weather forecast for 5 days with data every 3 hours by geographic coordinates. 
-Time, temperature, description and the probability of precipitation, plus the correspondent weather_icon.
-- Air pollution: 
+Weather forecast for 5 days with data every 3 hours by geographic coordinates. Time, temperature, description and the probability of precipitation, plus the correspondent weather icon.
+- **Air pollution**
 
-Air Quality Index(Good, Fair, Moderate, Poor, Very Poor, Fair) and the Сoncentration of CO (μg/m3)
-- History  
+Air Quality Index (Good, Fair, Moderate, Poor, Very Poor, Fair) and the Сoncentration of CO (μg/m3)
+- **History**
+
 A Matplotlib line chart plot including the average, minimum and maximum temperature
 
 # How to run
