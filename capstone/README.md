@@ -44,74 +44,68 @@ My project is a weather forecast-like site with the following functionality:
 
 # Files
 
-**capstone (base folder)**
+## Base folder (capstone)
+
 - README.md This file
 - db.sqlite3 The database
 - manage.py
 - requirements.txt
-- .env with the API key and icons path 
-    - OPEN_WEATHER_KEY 
-    - URL_ICONS 
+- .env with the API key and icons path  
 
-**capstone/capstone (project folder)**
+## Project folder (capstone/capstone)
+
 - asgi.py
-- settings.py Django settings for capstone project, retrieve environment variables.
+- settings.py Django settings for capstone project, retrieve environment variables, OPEN_WEATHER_KEY  
+and URL_ICONS.
 - urls.py URL configuration for capstone project.
 - wsgi.py
 
-**capstone/weather_app/ (app folder)**
-- admin.py
-    - Defines the CityAdmin class with list_display = ("city", "country", "state")
-    - Registers the (WUser) (City, CityAdmin) and (Time) models
-- apps.py
-    - Declares name = 'weather_app' in class WeatherAppConfig'  
-- forms.py
-    - 3 django forms for city weather (CityForm), geolocation (GeoCityForm) and monthly history weather (MonthlyNormalsForm)
-- models.py
-    - 2 django models, one for the geolocation info (City) and the other for users information plus a ManyToManyField "favouritesList" of locations  (WUser)
-- test.py
-    - A class that extends the TestCase class with a setUp function and 9 test functions for performing Django and Client Testing.
-- urls.py
-    - The urlpatterns list containing the calls to the path functions from views.py
-- views.py
-    - Contains all the application API logic, handles incoming requests, and generates responses.
+## App folder (capstone/weather_app)
 
-**capstone/weather_app/static/weather_app/**
-- air_pollution.js
-  
+- admin.py  
+  Defines the CityAdmin class with list_display = ("city", "country", "state")  
+  Registers the (WUser) (City, CityAdmin) and (Time) models
+- apps.py  
+  Declares name = 'weather_app' in class WeatherAppConfig'  
+- forms.py  
+  3 django forms for city weather (CityForm), geolocation (GeoCityForm) and monthly history weather (MonthlyNormalsForm)
+- models.py  
+  2 django models, one for the geolocation info (City) and the other for users information plus a ManyToManyField "favouritesList" of locations  (WUser)
+- test.py  
+  A class that extends the TestCase class with a setUp function and 9 test functions for performing Django and Client Testing.
+- urls.py  
+  The urlpatterns list containing the calls to the path functions from views.py
+- views.py  
+  Contains all the application API logic, handles incoming requests, and generates responses.
+
+### Static files (capstone/weather_app/static/weather_app)
+
+- air_pollution.js    
 airpollution() calls to openweather.org **/air_pollution** endpoint, using as parameter the latitude and longitude of the location chosen. Besides the Air Quality Index ('Good', 'Fair', 'Moderate', 'Poor', 'Very Poor'), returns the concentration of Carbon monoxide (CO) in μg/m3.
 
-- forecast.js
-  
+- forecast.js    
 forecast() calls to **/forecast** endpoint, using as parameter the latitude and longitude of the chosen location . Returns weather forecast for 5 days with data every 3 hours by geographic coordinates. Displays the information breaking by day, showing the corresponding weather icons and transforming the result data (wind direction and timestamps) 
 
-- geoloc.js
-  
+- geoloc.js    
 saveCity() registers the geolocation information (name, latitude, longitude, country and state) in the database 
 
-- weather_app.js
-
-getLocation() calls the 'getCurrentPosition" function and saves the result data (position.coords.latitude and position.coords.longitude) in a session variable (sessionStorage).
-
-showPosition() calls the **'/weather** endpoint with position.coords.latitude and position.coords.longitude. 
-
-cityWeather() function calls the **'/weather** endpoint, using as parameter the latitude, longitude and id stored in the database for the location chosen from the list.
-
-addFavourite() adds the chosen location to the user favourite list, using as parameter the location id.
-
-- weather_history.js
-
+- weather_app.js  
+getLocation() calls the 'getCurrentPosition" function and saves the result data (position.coords.latitude and position.coords.longitude) in a session variable (sessionStorage).  
+showPosition() calls the **/weather** endpoint with position.coords.latitude and position.coords.longitude.   
+cityWeather() function calls the **/weather** endpoint, using as parameter the latitude, longitude and id stored in the database for the location chosen from the list.  
+addFavourite() adds the chosen location to the user favourite list, using as parameter the location id.  
+- weather_history.js  
 weather_history() uses latitude and longitude as parameters to get the meteorological station closest to the chosen location. It then gets the MeteoStat monthly data for the last year for that station and shows it in a graph.
+- styles.css  
+Some additional styles for buttons, tooltips and footer
 
-- styles.css
+### Templates (capstone/weather_app/templates/weather_app)
 
-Some additional styles for buttons, tooltips and footer,
-
-**capstone/weather_app/templates/weather_app/**  
 - geoloc.html  
 Allows the user to search for the geolocation information of a given place,up to 5 results for search.
 If the user is signed in should have the ability to save the location and automatically include it on his fauvorites places list.  
 If it already exists the page should say so. If the location is not found the user should be presented with an error (*Geodata for Xxxxxx not found!*)  
+
 - index.html  
 Shows the current weather using the device's current position.  
 If a user is signed up, it will also show a list of all of the locations registered in the system, displaying its name, state and country, as well as the latitude and longitude of each place.
@@ -119,6 +113,7 @@ If the user is logged in and clicks on his or her name in the menu bar, the list
 Clicking the 'thermometer' icon will show a brief description of the current weather in that location   
 Clicking the 'heart' icon will save the location in the user's fauvorite list. If the item is already on the list, the user should be able to remove it.  
 When a user clicks on the name of the location, it will be taken to the "Weather" page, using the geographical coordinates  registered, instead of the location name, for more accurate information.  
+
 - layout.html  
 The common layout of the app, a menu, a body container, and a footer.
     - General options
@@ -131,13 +126,17 @@ The common layout of the app, a menu, a body container, and a footer.
     - Only for unauthenticated users
         - Log in
         - Register
+
 - login.html  
 Ask for user's name and password to sign up in the system 
+
 - monthlyweather.html  
 Using the information retrieved from Meteostat, the logged users can consult the weather history of any location, whether or not stored in the database, for a specific period of time. If the location is not found, the user will be shown an error (*Geographic data for Xxxxxx not found!*).  
 The result of the query is a plot that shows monthly maximum, minimum and average temperatures. In addition, the name of the station providing the information is shown in the header of the graph.
+
 - register.html  
 User sign up, asking for Username, Email Address and Password
+
 - weather.html  
 Any user, signed up or not, can search for the current weather data for any location. If the location is not found the user should be presented with an error (*Location not found!*) Otherwise, all the detailed information about the current weather for a given location is displayed:  
     - Temperature  
@@ -162,11 +161,14 @@ A Matplotlib line chart plot including the average, minimum and maximum temperat
 
 # How to run
 
-- Set up enviromment
+## Set up enviromment
+
     - Django
     - Sqlite
     - The Meteostat Python package, available through PyPI: pip install meteostat (Meteostat requires Python 3.6 or higher.)
-- Install
+
+## Install
+
 1. Clone the repository using the command git clone [https://github.com/mariaamadodominguez/cs50wcapstone.git]
 2. Create a virtual environment for the project 
     - a. Install the python3-venv package using the command. 
@@ -177,4 +179,5 @@ A Matplotlib line chart plot including the average, minimum and maximum temperat
     - c. Activate the virtual env: source cs50wenv/bin/activate
 3. pip install -r requirements.txt. Django, Pandas, Matplotlib, python-dotenv and Requests
 4. Make and apply migrations by running python manage.py makemigrations and python manage.py migrate.
-- Run the server using python manage.py runserver
+
+## Run the server using python manage.py runserver
